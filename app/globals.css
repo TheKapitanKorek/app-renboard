@@ -17,6 +17,7 @@ html {
 }
 
 @layer components {
+  /* MENU STYLING */
   .menu-list li {
     @apply p-2 bg-onyx hover:bg-skin hover:text-deepgreen;
   }
@@ -44,5 +45,9 @@ html {
   }
   .lower-menu li p {
     @apply ml-2 hidden md:flex;
+  }
+
+  .expandable-select h2 {
+    @apply flex flex-row items-center border-b-2 my-2 border-onyx;
   }
 }

@@ -2,7 +2,7 @@ import "./styles.css";
 
 export const ChessBoard = ({}) => {
   return (
-    <div className="w-max m-5 flex-col basis-3/4 items-center">
+    <div className="w-max m-5 flex-col basis-2/3 items-center">
       <div className="bg-slate-400 m-4">player 2</div>
       <div id="chess-board" className="black">
         <div id="board">

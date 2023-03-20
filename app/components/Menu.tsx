@@ -10,7 +10,7 @@ export const Menu: FC = () => {
     <div className="flex grow-0 flex-col h-screen border-solid border-r-4 border-skin w-12 md:w-64 text-skin fixed">
       <div className="flex items-end p-2 py-8 md:p-4 text-deepgreen bg-skin">
         <FaChessKing size={40} />
-        <p className="text-2xl ml-2 hidden md:flex"> Ren Board</p>
+        <h1 className="text-2xl ml-2 hidden md:flex"> Ren Board</h1>
       </div>
       <ul className="menu-list">
         <li>

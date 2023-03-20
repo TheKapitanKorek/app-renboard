@@ -16,7 +16,7 @@ export default function RootLayout({
       <body>
         <div className="bg-onyx flex">
           <Menu />
-          <div className="ml-24 md:ml-64">{children}</div>
+          <div className="ml-24 md:ml-64 w-full">{children}</div>
         </div>
       </body>
     </html>
