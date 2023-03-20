@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  background: #2c3531;
+}
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #ffcb9a;
+  border-radius: 14px;
+}
+
+@layer components {
+  .menu-list li {
+    @apply p-2 bg-onyx hover:bg-skin hover:text-deepgreen;
+  }
+
+  .menu-list li p {
+    @apply text-xl ml-2 hidden md:flex;
+  }
+
+  .menu-list a {
+    @apply flex flex-row;
+  }
+
+  .menu-list {
+    @apply mb-auto;
+  }
+  .lower-menu {
+    @apply flex flex-col;
+  }
+
+  .lower-menu li {
+    @apply p-1 ml-2 my-auto md:mx-1 mb-1 border-b-skin hover:border-b-2;
+  }
+  .lower-menu a {
+    @apply flex flex-row;
+  }
+  .lower-menu li p {
+    @apply ml-2 hidden md:flex;
+  }
+}
