@@ -1,9 +1,10 @@
-import { Inter } from "next/font/google";
-
+import { ChessBoard } from '@/app/views/ChessBoard';
+import { ConfigurationPanel } from '@/app/views/ConfigurationPanel';
 export default function Home() {
   return (
-    <main>
-      <div>Hello</div>
+    <main className="flex flex-col items-center sm:flex-row justify-evenly">
+      <ChessBoard />
+      <ConfigurationPanel />
     </main>
   );
 }

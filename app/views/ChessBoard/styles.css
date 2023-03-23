@@ -26,6 +26,8 @@
   grid-template-rows: repeat(8, 12.5%);
 }
 
+/* CHESS LAYOUT CLASSES */
+
 .white #board {
   grid-template-areas:
     'a_h b_h c_h d_h e_h f_h g_h h_h'
@@ -47,6 +49,206 @@
     'h_f g_f f_f e_f d_f c_f b_f a_f'
     'h_g g_g f_g e_g d_g c_g bgh_g a_g'
     'h_h g_h f_h e_h d_h c_h b_h a_h';
+}
+
+.A1 {
+  grid-area: a_a;
+}
+.A2 {
+  grid-area: a_b;
+}
+.A3 {
+  grid-area: a_c;
+}
+.A4 {
+  grid-area: a_d;
+}
+.A5 {
+  grid-area: a_e;
+}
+.A6 {
+  grid-area: a_f;
+}
+.A7 {
+  grid-area: ag;
+}
+.A8 {
+  grid-area: ah;
+}
+/* ------B-------- */
+.B1 {
+  grid-area: b_a;
+}
+.B2 {
+  grid-area: b_b;
+}
+.B3 {
+  grid-area: b_c;
+}
+.B4 {
+  grid-area: b_d;
+}
+.B5 {
+  grid-area: b_e;
+}
+.B6 {
+  grid-area: b_f;
+}
+.B7 {
+  grid-area: b_g;
+}
+.B8 {
+  grid-area: b_h;
+}
+/* --------C------- */
+.C1 {
+  grid-area: c_a;
+}
+.C2 {
+  grid-area: c_b;
+}
+.C3 {
+  grid-area: c_c;
+}
+.C4 {
+  grid-area: c_d;
+}
+.C5 {
+  grid-area: c_e;
+}
+.C6 {
+  grid-area: c_f;
+}
+.C7 {
+  grid-area: c_g;
+}
+.C8 {
+  grid-area: c_h;
+}
+/* ------D------ */
+.D1 {
+  grid-area: d_a;
+}
+.D2 {
+  grid-area: d_b;
+}
+.D3 {
+  grid-area: d_c;
+}
+.D4 {
+  grid-area: d_d;
+}
+.D5 {
+  grid-area: d_e;
+}
+.D6 {
+  grid-area: d_f;
+}
+.D7 {
+  grid-area: d_g;
+}
+.D8 {
+  grid-area: d_h;
+}
+/* ------E------ */
+.E1 {
+  grid-area: e_a;
+}
+.E2 {
+  grid-area: e_b;
+}
+.E3 {
+  grid-area: e_c;
+}
+.E4 {
+  grid-area: e_d;
+}
+.E5 {
+  grid-area: e_e;
+}
+.E6 {
+  grid-area: e_f;
+}
+.E7 {
+  grid-area: e_g;
+}
+.E8 {
+  grid-area: e_h;
+}
+/* ------F------ */
+.F1 {
+  grid-area: f_a;
+}
+.F2 {
+  grid-area: f_b;
+}
+.F3 {
+  grid-area: f_c;
+}
+.F4 {
+  grid-area: f_d;
+}
+.F5 {
+  grid-area: f_e;
+}
+.F6 {
+  grid-area: f_f;
+}
+.F7 {
+  grid-area: f_g;
+}
+.F8 {
+  grid-area: f_h;
+}
+/* ------G------ */
+.G1 {
+  grid-area: g_a;
+}
+.G2 {
+  grid-area: g_b;
+}
+.G3 {
+  grid-area: g_c;
+}
+.G4 {
+  grid-area: g_d;
+}
+.G5 {
+  grid-area: g_e;
+}
+.G6 {
+  grid-area: g_f;
+}
+.G7 {
+  grid-area: g_g;
+}
+.G8 {
+  grid-area: g_h;
+}
+/* ------H------ */
+.H1 {
+  grid-area: h_a;
+}
+.H2 {
+  grid-area: h_b;
+}
+.H3 {
+  grid-area: h_c;
+}
+.H4 {
+  grid-area: h_d;
+}
+.H5 {
+  grid-area: h_e;
+}
+.H6 {
+  grid-area: h_f;
+}
+.H7 {
+  grid-area: h_g;
+}
+.H8 {
+  grid-area: h_h;
 }
 
 #vertical-coordinate {
@@ -97,11 +299,12 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  background: transparent;
+  background: black;
+  cursor: grab;
 }
 
 .piece svg {
-  background: transparent;
+  background: black;
   overflow: hidden;
   margin: 5% 0;
 }

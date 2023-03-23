@@ -1,13 +1,5 @@
+import { Bishop } from '@/app/components/ChessPieces';
 import './styles.css';
-
-import {
-  FaChessPawn,
-  FaChessBishop,
-  FaChessKnight,
-  FaChessRook,
-  FaChessQueen,
-  FaChessKing,
-} from 'react-icons/fa';
 
 interface PlayerFieldProps {
   username: string;
@@ -50,9 +42,7 @@ export const ChessBoard = ({}) => {
       <PlayerField username="player1" time={600} />
       <div id="chess-board" className="black">
         <div id="board">
-          <div className="piece" draggable>
-            <FaChessBishop size={200} />
-          </div>
+          <Bishop position="B-2" playerColor="black" extra={{}} />
         </div>
         <div id="vertical-coordinate">
           <div className="index">1</div>

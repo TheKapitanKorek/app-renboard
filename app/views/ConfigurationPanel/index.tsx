@@ -5,8 +5,8 @@ import { FaChessPawn } from 'react-icons/fa';
 import { SlMagicWand } from 'react-icons/sl';
 import { GiMagicShield } from 'react-icons/gi';
 
-import { StyledRadioButton, ButtonPrimary } from '../Buttons';
-import { LoadingMessageBox } from '../LoadingGameBox';
+import { StyledRadioButton, ButtonPrimary } from '../../components/Buttons';
+import { LoadingMessageBox } from '../../components/LoadingGameBox';
 
 interface GameMode {
   time: `${number}_min`;
