@@ -2,15 +2,15 @@
   padding-top: 3%;
   padding-right: 3%;
   margin: auto;
-  --square-side: min(85vh, 60vw);
+  --square-side: min(80vh, 60vw);
   width: var(--square-side);
   height: var(--square-side);
   display: grid;
   grid-template-rows: 96% 4%;
   grid-template-columns: 4% 96%;
   grid-template-areas:
-    "vertical board artificial-padding"
-    "corner horizontal artificial-padding";
+    'vertical board artificial-padding'
+    'corner horizontal artificial-padding';
   background-color: #d9b08c;
   color: #116466;
   font-weight: bold;
@@ -19,7 +19,7 @@
 #board {
   display: grid;
   grid-area: board;
-  background-image: url("https://www.chess.com/boards/green/150.png");
+  background-image: url('https://www.chess.com/boards/green/150.png');
   background-repeat: no-repeat;
   background-size: contain;
   grid-template-columns: repeat(8, 12.5%);
@@ -28,25 +28,25 @@
 
 .white #board {
   grid-template-areas:
-    "a_h b_h c_h d_h e_h f_h g_h h_h"
-    "a_g b_g c_g d_g e_g f_g g_g h_g"
-    "a_f b_f c_f d_f e_f f_f g_f h_f"
-    "a_e b_e c_e d_e e_e f_e g_e h_e"
-    "a_d b_d c_d d_d e_d f_d g_d h_d"
-    "a_c b_c c_c d_c e_c f_c g_c h_c"
-    "a_b b_b c_b d_b e_b f_b g_b h_b"
-    "a_a b_a c_a d_a e_a f_a g_a h_a";
+    'a_h b_h c_h d_h e_h f_h g_h h_h'
+    'a_g b_g c_g d_g e_g f_g g_g h_g'
+    'a_f b_f c_f d_f e_f f_f g_f h_f'
+    'a_e b_e c_e d_e e_e f_e g_e h_e'
+    'a_d b_d c_d d_d e_d f_d g_d h_d'
+    'a_c b_c c_c d_c e_c f_c g_c h_c'
+    'a_b b_b c_b d_b e_b f_b g_b h_b'
+    'a_a b_a c_a d_a e_a f_a g_a h_a';
 }
 .black #board {
   grid-template-areas:
-    "h_a g_a f_a e_a d_a c_a b_a a_a"
-    "h_b g_b f_b e_b d_b c_b b_b a_b"
-    "h_c g_c f_c e_c d_c c_c b_c a_c"
-    "h_d g_d f_d e_d d_d c_d b_d a_d"
-    "h_e g_e f_e e_e d_e c_e b_e a_e"
-    "h_f g_f f_f e_f d_f c_f b_f a_f"
-    "h_g g_g f_g e_g d_g c_g b_g a_g"
-    "h_h g_h f_h e_h d_h c_h b_h a_h";
+    'h_a g_a f_a e_a d_a c_a b_a a_a'
+    'h_b g_b f_b e_b d_b c_b b_b a_b'
+    'h_c g_c f_c e_c d_c c_c b_c a_c'
+    'h_d g_d f_d e_d d_d c_d b_d a_d'
+    'h_e g_e f_e e_e d_e c_e b_e a_e'
+    'h_f g_f f_f e_f d_f c_f b_f a_f'
+    'h_g g_g f_g e_g d_g c_g bgh_g a_g'
+    'h_h g_h f_h e_h d_h c_h b_h a_h';
 }
 
 #vertical-coordinate {
@@ -91,7 +91,17 @@
   grid-area: corner;
 }
 
-.square {
-  grid-area: b_g;
-  background-color: black;
+.piece {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.piece svg {
+  background: transparent;
+  overflow: hidden;
+  margin: 5% 0;
 }
