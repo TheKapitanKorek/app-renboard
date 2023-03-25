@@ -19,7 +19,7 @@
 #board {
   display: grid;
   grid-area: board;
-  background-image: url('https://www.chess.com/boards/green/150.png');
+  background-image: url('../../../public/chessboard.png');
   background-repeat: no-repeat;
   background-size: contain;
   grid-template-columns: repeat(8, 12.5%);
@@ -299,12 +299,36 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  background: black;
   cursor: grab;
+  z-index: 10;
+}
+.piece:active {
+  cursor: grabbing;
 }
 
 .piece svg {
-  background: black;
   overflow: hidden;
   margin: 5% 0;
+}
+
+.move-hint {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.move-hint .move-mark {
+  height: 40%;
+  width: 40%;
+  opacity: 30%;
+  background-color: black;
+  border-radius: 50%;
+}
+.move-hint .capture-mark {
+  height: 100%;
+  width: 100%;
+  opacity: 30%;
+  border: 0.5rem solid black;
+  border-radius: 50%;
+  box-sizing: border-box;
 }

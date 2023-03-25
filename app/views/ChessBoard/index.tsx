@@ -1,4 +1,7 @@
-import { Bishop } from '@/app/components/ChessPieces';
+'use client';
+
+import { useRef, useState, useLayoutEffect } from 'react';
+import { Piece, MoveHint } from '@/app/components/ChessPieces';
 import './styles.css';
 
 interface PlayerFieldProps {
@@ -36,13 +39,48 @@ const PlayerField = ({
   );
 };
 
+const state = {
+  board: {
+    B4: { figure: 'p', color: 'b' },
+    B3: { figure: 'p', color: 'w' },
+    A3: { figure: 'p', color: 'b' },
+    C3: { figure: 'p', color: 'w' },
+  },
+};
+
+const renderGame = (board) => {
+  return Object.keys(board).map((position) => (
+    <Piece
+      position={position}
+      color={board[position].color}
+      figure={board[position].figure}
+    />
+  ));
+};
+
+const renderMoves = (moves) => {
+  return moves.map((move) => (
+    <MoveHint origin={move.origin} position={move.direction} type={move.type} />
+  ));
+};
+
+const calcMoveSet = () => {
+  return [{ origin: 'A3', direction: 'A2', type: 'move' }];
+};
+
 export const ChessBoard = ({}) => {
+  const moves = calcMoveSet();
+  const chessboardRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className="w-max mx-5 flex-col basis-2/3 items-center">
       <PlayerField username="player1" time={600} />
       <div id="chess-board" className="black">
         <div id="board">
-          <Bishop position="B-2" playerColor="black" extra={{}} />
+          {/* chess pieces */}
+          {...renderGame(state.board)}
+          {/* Extra elements */}
+          {...renderMoves(moves)}
         </div>
         <div id="vertical-coordinate">
           <div className="index">1</div>
