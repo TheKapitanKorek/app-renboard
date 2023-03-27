@@ -1,7 +1,15 @@
 'use client';
 
-import { useRef, useState, useLayoutEffect } from 'react';
-import { Piece, MoveHint } from '@/app/components/ChessPieces';
+import { useRef, useState } from 'react';
+import {
+  Piece,
+  PieceInterface,
+  MoveHint,
+  MoveHintInterface,
+  makeMoveFT,
+  calcPossibleMovesFT,
+} from '@/app/components/ChessPieces';
+import { xCordType, yCordType } from '@/app/constants';
 import './styles.css';
 
 interface PlayerFieldProps {
@@ -24,10 +32,10 @@ const PlayerField = ({
   time,
 }: PlayerFieldProps): JSX.Element => {
   return (
-    <div className="flex flex-row bg-skin my-4 p-2 rounded-md justify-between">
+    <div className="flex flex-row bg-skin my-2 p-1 rounded-md justify-between">
       <div className="flex flex-row">
         <div
-          className="mx-2 rounded-md h-8 aspect-square bg-no-repeat bg-cover bg-center"
+          className="mr-2 rounded-md h-8 aspect-square bg-no-repeat bg-cover bg-center"
           style={{ backgroundImage: `url("${profileImageURL}")` }}
         />
         <p className="font-bold text-onyx leading-3">{username}</p>
@@ -39,48 +47,79 @@ const PlayerField = ({
   );
 };
 
-const state = {
-  board: {
+// GAME ELEMENT
+export const ChessBoard = ({}) => {
+  const chessboardRef = useRef<HTMLDivElement>(null);
+  const [board, setBoard] = useState({
     B4: { figure: 'p', color: 'b' },
     B3: { figure: 'p', color: 'w' },
-    A3: { figure: 'p', color: 'b' },
+    A4: { figure: 'p', color: 'b' },
     C3: { figure: 'p', color: 'w' },
-  },
-};
+  });
+  const [playerColor, setPlayerColor] = useState('b');
+  const [possibleMoves, setPossibleMoves]: [any, any] = useState([]); //TODO
 
-const renderGame = (board) => {
-  return Object.keys(board).map((position) => (
-    <Piece
-      position={position}
-      color={board[position].color}
-      figure={board[position].figure}
-    />
-  ));
-};
+  const calcPossibleMoves = (piecePosition: string) => {
+    //do some heavy calculations
+    if (piecePosition === 'A4') {
+      setPossibleMoves([
+        { origin: 'A4', direction: 'A3', type: 'move' },
+        { origin: 'A4', direction: 'B3', type: 'capture' },
+      ]);
+    } else {
+      setPossibleMoves([{ origin: 'B4', direction: 'C3', type: 'capture' }]);
+    }
+  };
 
-const renderMoves = (moves) => {
-  return moves.map((move) => (
-    <MoveHint origin={move.origin} position={move.direction} type={move.type} />
-  ));
-};
+  const makeMove = ({ origin, direction, type = 'move' }) => {
+    const possibleMove = possibleMoves.find((m) => m.direction === direction);
+    if (!possibleMove) return;
 
-const calcMoveSet = () => {
-  return [{ origin: 'A3', direction: 'A2', type: 'move' }];
-};
+    const boardCoppy = { ...board };
+    if (type === 'move' || type === 'capture') {
+      boardCoppy[direction] = { ...boardCoppy[origin] };
+      delete boardCoppy[origin];
+    }
 
-export const ChessBoard = ({}) => {
-  const moves = calcMoveSet();
-  const chessboardRef = useRef<HTMLDivElement>(null);
+    setBoard(boardCoppy);
+    setPossibleMoves([]);
+  };
 
+  const renderMoves = (moves) => {
+    return moves.map((move) => (
+      <MoveHint
+        origin={move.origin}
+        direction={move.direction}
+        type={move.type}
+        makeMove={makeMove}
+      />
+    ));
+  };
+
+  const renderGame = (board) => {
+    return Object.keys(board).map((position) => (
+      <Piece
+        position={position}
+        color={board[position].color}
+        figure={board[position].figure}
+        boardRef={chessboardRef}
+        ownPiece={board[position].color === playerColor}
+        makeMove={makeMove}
+        calcPossibleMoves={calcPossibleMoves}
+        key={board[position].color + board[position].figure + position}
+      />
+    ));
+  };
+  console.log(board);
   return (
     <div className="w-max mx-5 flex-col basis-2/3 items-center">
       <PlayerField username="player1" time={600} />
-      <div id="chess-board" className="black">
-        <div id="board">
+      <div id="chess-board" className={playerColor === 'b' ? 'black' : 'white'}>
+        <div id="board" ref={chessboardRef}>
           {/* chess pieces */}
-          {...renderGame(state.board)}
+          {...renderGame(board)}
           {/* Extra elements */}
-          {...renderMoves(moves)}
+          {...renderMoves(possibleMoves)}
         </div>
         <div id="vertical-coordinate">
           <div className="index">1</div>

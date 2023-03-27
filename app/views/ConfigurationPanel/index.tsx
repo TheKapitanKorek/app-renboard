@@ -27,7 +27,7 @@ export const ConfigurationPanel = () => {
   const GameIcon = gameModesIconMap[gameMode.mode];
 
   return (
-    <form className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[80vh] w-full">
+    <form className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[85vh] w-full">
       <button
         type="button"
         className="flex flex-row rounded-md border-box border-2 p-1 border-onyx hover:bg-onyx hover:text-skin justify-center items-center relative"

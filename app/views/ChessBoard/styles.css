@@ -2,7 +2,7 @@
   padding-top: 3%;
   padding-right: 3%;
   margin: auto;
-  --square-side: min(80vh, 60vw);
+  --square-side: min(85vh, 60vw);
   width: var(--square-side);
   height: var(--square-side);
   display: grid;
@@ -299,11 +299,16 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  cursor: grab;
   z-index: 10;
 }
-.piece:active {
+
+.own-piece {
+  cursor: grab;
+}
+
+.own-piece:active {
   cursor: grabbing;
+  z-index: 11;
 }
 
 .piece svg {
@@ -315,6 +320,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 }
 
 .move-hint .move-mark {
