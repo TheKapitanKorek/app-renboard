@@ -11,6 +11,7 @@ export type xCordType =
   | 'I'
   | 'J';
 export type yCordType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type squareString = `${xCordType}${yCordType}`;
 export const cordToLetterMap: {
   [key: `${number}`]: xCordType;
 } = {

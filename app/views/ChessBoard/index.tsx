@@ -9,13 +9,24 @@ import {
   makeMoveFT,
   calcPossibleMovesFT,
 } from '@/app/components/ChessPieces';
-import { xCordType, yCordType } from '@/app/constants';
+import { squareString } from '@/app/constants';
 import './styles.css';
 
 interface PlayerFieldProps {
   username: string;
   profileImageURL?: string;
   time: number;
+}
+
+interface pieceMapElement {
+  figure: string;
+  color: 'w' | 'b';
+}
+
+interface possibleMoveInterface {
+  origin: squareString;
+  direction: squareString;
+  type: 'move' | 'capture';
 }
 
 const secondsToClock = (seconds: number): string => {
@@ -50,17 +61,19 @@ const PlayerField = ({
 // GAME ELEMENT
 export const ChessBoard = ({}) => {
   const chessboardRef = useRef<HTMLDivElement>(null);
-  const [board, setBoard] = useState({
-    B4: { figure: 'p', color: 'b' },
-    B3: { figure: 'p', color: 'w' },
-    A4: { figure: 'p', color: 'b' },
-    C3: { figure: 'p', color: 'w' },
-  });
-  const [playerColor, setPlayerColor] = useState('b');
-  const [possibleMoves, setPossibleMoves]: [any, any] = useState([]); //TODO
+  const [board, setBoard] = useState(
+    new Map<squareString, pieceMapElement>([
+      ['B4', { figure: 'p', color: 'b' }],
+      ['B3', { figure: 'p', color: 'w' }],
+      ['A4', { figure: 'p', color: 'b' }],
+      ['C3', { figure: 'p', color: 'w' }],
+    ])
+  );
+  const [playerColor, setPlayerColor] = useState<'w' | 'b'>('b');
+  const [possibleMoves, setPossibleMoves] = useState<possibleMoveInterface[]>([]);
 
   const calcPossibleMoves = (piecePosition: string) => {
-    //do some heavy calculations
+    //do some heavy calculations TODO
     if (piecePosition === 'A4') {
       setPossibleMoves([
         { origin: 'A4', direction: 'A3', type: 'move' },
@@ -71,21 +84,21 @@ export const ChessBoard = ({}) => {
     }
   };
 
-  const makeMove = ({ origin, direction, type = 'move' }) => {
+  const makeMove: makeMoveFT = ({ origin, direction, type = 'move' }) => {
     const possibleMove = possibleMoves.find((m) => m.direction === direction);
     if (!possibleMove) return;
-
-    const boardCoppy = { ...board };
-    if (type === 'move' || type === 'capture') {
-      boardCoppy[direction] = { ...boardCoppy[origin] };
-      delete boardCoppy[origin];
-    }
+    if (!(type === 'move' || type === 'capture')) return;
+    const boardCoppy = new Map(board);
+    const movedPiece = boardCoppy.get(origin);
+    if (!movedPiece) return;
+    boardCoppy.set(direction, movedPiece);
+    boardCoppy.delete(origin);
 
     setBoard(boardCoppy);
     setPossibleMoves([]);
   };
 
-  const renderMoves = (moves) => {
+  const renderMoves = (moves: possibleMoveInterface[]) => {
     return moves.map((move) => (
       <MoveHint
         origin={move.origin}
@@ -96,21 +109,21 @@ export const ChessBoard = ({}) => {
     ));
   };
 
-  const renderGame = (board) => {
-    return Object.keys(board).map((position) => (
+  const renderGame = (board: Map<squareString, pieceMapElement>) => {
+    return [...board].map(([position, { color, figure }]) => (
       <Piece
         position={position}
-        color={board[position].color}
-        figure={board[position].figure}
+        color={color}
+        figure={figure}
         boardRef={chessboardRef}
-        ownPiece={board[position].color === playerColor}
+        ownPiece={color === playerColor}
         makeMove={makeMove}
         calcPossibleMoves={calcPossibleMoves}
-        key={board[position].color + board[position].figure + position}
+        key={color + figure + position}
       />
     ));
   };
-  console.log(board);
+
   return (
     <div className="w-max mx-5 flex-col basis-2/3 items-center">
       <PlayerField username="player1" time={600} />

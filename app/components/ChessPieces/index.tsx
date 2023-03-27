@@ -4,7 +4,7 @@ import { useGesture } from '@use-gesture/react';
 import { RefObject, useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { cordToLetterMap } from '@/app/constants';
+import { cordToLetterMap, squareString } from '@/app/constants';
 
 export type calcPossibleMovesFT = (position: string) => void;
 
@@ -13,13 +13,13 @@ export type makeMoveFT = ({
   direction,
   type,
 }: {
-  origin: string;
-  direction: string;
+  origin: squareString;
+  direction: squareString;
   type?: string;
 }) => void;
 
 export interface PieceInterface {
-  position: string;
+  position: squareString;
   figure: string;
   color: string;
   boardRef: RefObject<HTMLDivElement>;
@@ -31,8 +31,8 @@ export interface PieceInterface {
 }
 
 export interface MoveHintInterface {
-  origin: string;
-  direction: string;
+  origin: squareString;
+  direction: squareString;
   type: string;
   makeMove: makeMoveFT;
 }
