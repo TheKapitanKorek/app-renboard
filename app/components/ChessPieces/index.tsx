@@ -4,38 +4,8 @@ import { useGesture } from '@use-gesture/react';
 import { RefObject, useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { cordToLetterMap, squareString } from '@/app/constants';
-
-export type calcPossibleMovesFT = (position: string) => void;
-
-export type makeMoveFT = ({
-  origin,
-  direction,
-  type,
-}: {
-  origin: squareString;
-  direction: squareString;
-  type?: string;
-}) => void;
-
-export interface PieceInterface {
-  position: squareString;
-  figure: string;
-  color: string;
-  boardRef: RefObject<HTMLDivElement>;
-  extra?: {};
-  ownPiece: boolean;
-  calcPossibleMoves: calcPossibleMovesFT;
-  makeMove: makeMoveFT;
-  key: string;
-}
-
-export interface MoveHintInterface {
-  origin: squareString;
-  direction: squareString;
-  type: string;
-  makeMove: makeMoveFT;
-}
+import { boardSize, cordToLetterMap } from '@/app/constants';
+import { PieceInterface, MoveHintInterface } from '@/app/methods/game/interfaces';
 
 export const Piece = ({
   position,
@@ -66,7 +36,7 @@ export const Piece = ({
       y: offsetY,
       immediate: true,
     });
-    calcPossibleMoves(position);
+    calcPossibleMoves(position, figure);
   };
   const onRelese = () => {
     api.start({
@@ -102,9 +72,9 @@ export const Piece = ({
         let xCord, yCord;
         if (color === 'w') {
           xCord = Math.floor((pageX - boardRect.left) / rect.width);
-          yCord = 7 - Math.floor((pageY - boardRect.top) / rect.height);
+          yCord = boardSize - 1 - Math.floor((pageY - boardRect.top) / rect.height);
         } else {
-          xCord = 7 - Math.floor((pageX - boardRect.left) / rect.width);
+          xCord = boardSize - 1 - Math.floor((pageX - boardRect.left) / rect.width);
           yCord = Math.floor((pageY - boardRect.top) / rect.height);
         }
         // @ts-ignore
@@ -124,7 +94,7 @@ export const Piece = ({
       onMouseDown={onTap}
       onMouseUp={onRelese}
       onTouchStart={() => {
-        calcPossibleMoves(position);
+        calcPossibleMoves(position, figure);
       }}
     >
       <Image
@@ -139,12 +109,7 @@ export const Piece = ({
   );
 };
 
-export const MoveHint = ({
-  origin,
-  direction,
-  type,
-  makeMove,
-}: MoveHintInterface) => {
+export const MoveHint = ({ origin, direction, type, makeMove }: MoveHintInterface) => {
   return (
     <div
       className={`move-hint ${direction}`}

@@ -1,32 +1,22 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { Piece, MoveHint } from '@/app/components/ChessPieces';
+import { SquareString } from '@/app/constants';
+import { Game } from '@/app/methods/game';
 import {
-  Piece,
-  PieceInterface,
-  MoveHint,
-  MoveHintInterface,
-  makeMoveFT,
-  calcPossibleMovesFT,
-} from '@/app/components/ChessPieces';
-import { squareString } from '@/app/constants';
+  PieceMapElement,
+  PossibleMove,
+  OcasionalMove,
+  MakeMoveFT,
+  Color,
+} from '@/app/methods/game/interfaces';
 import './styles.css';
 
 interface PlayerFieldProps {
   username: string;
   profileImageURL?: string;
   time: number;
-}
-
-interface pieceMapElement {
-  figure: string;
-  color: 'w' | 'b';
-}
-
-interface possibleMoveInterface {
-  origin: squareString;
-  direction: squareString;
-  type: 'move' | 'capture';
 }
 
 const secondsToClock = (seconds: number): string => {
@@ -62,15 +52,25 @@ const PlayerField = ({
 export const ChessBoard = ({}) => {
   const chessboardRef = useRef<HTMLDivElement>(null);
   const [board, setBoard] = useState(
-    new Map<squareString, pieceMapElement>([
+    new Map<SquareString, PieceMapElement>([
       ['B4', { figure: 'p', color: 'b' }],
       ['B3', { figure: 'p', color: 'w' }],
       ['A4', { figure: 'p', color: 'b' }],
       ['C3', { figure: 'p', color: 'w' }],
     ])
   );
-  const [playerColor, setPlayerColor] = useState<'w' | 'b'>('b');
-  const [possibleMoves, setPossibleMoves] = useState<possibleMoveInterface[]>([]);
+  const [playerColor, setPlayerColor] = useState<Color>('w');
+  const [possibleMoves, setPossibleMoves] = useState<PossibleMove[]>([]);
+  const [ocasionalMoves, setOcasionalMoves] = useState<OcasionalMove[]>([]);
+
+  const game = new Game(
+    board,
+    setBoard,
+    setPossibleMoves,
+    ocasionalMoves,
+    setOcasionalMoves,
+    playerColor
+  );
 
   const calcPossibleMoves = (piecePosition: string) => {
     //do some heavy calculations TODO
@@ -84,7 +84,7 @@ export const ChessBoard = ({}) => {
     }
   };
 
-  const makeMove: makeMoveFT = ({ origin, direction, type = 'move' }) => {
+  const makeMove: MakeMoveFT = ({ origin, direction, type = 'move' }) => {
     const possibleMove = possibleMoves.find((m) => m.direction === direction);
     if (!possibleMove) return;
     if (!(type === 'move' || type === 'capture')) return;
@@ -98,7 +98,7 @@ export const ChessBoard = ({}) => {
     setPossibleMoves([]);
   };
 
-  const renderMoves = (moves: possibleMoveInterface[]) => {
+  const renderMoves = (moves: PossibleMove[]) => {
     return moves.map((move) => (
       <MoveHint
         origin={move.origin}
@@ -109,7 +109,7 @@ export const ChessBoard = ({}) => {
     ));
   };
 
-  const renderGame = (board: Map<squareString, pieceMapElement>) => {
+  const renderGame = (board: Map<SquareString, PieceMapElement>) => {
     return [...board].map(([position, { color, figure }]) => (
       <Piece
         position={position}
@@ -118,7 +118,7 @@ export const ChessBoard = ({}) => {
         boardRef={chessboardRef}
         ownPiece={color === playerColor}
         makeMove={makeMove}
-        calcPossibleMoves={calcPossibleMoves}
+        calcPossibleMoves={game.getMoves}
         key={color + figure + position}
       />
     ));
