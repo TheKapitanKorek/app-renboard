@@ -4,13 +4,7 @@ import { useRef, useState } from 'react';
 import { Piece, MoveHint } from '@/app/components/ChessPieces';
 import { SquareString } from '@/app/constants';
 import { Game } from '@/app/methods/game';
-import {
-  PieceMapElement,
-  PossibleMove,
-  OcasionalMove,
-  MakeMoveFT,
-  Color,
-} from '@/app/methods/game/interfaces';
+import { PieceMapElement, PossibleMove, OcasionalMove, Color } from '@/app/methods/game/interfaces';
 import './styles.css';
 
 interface PlayerFieldProps {
@@ -66,45 +60,20 @@ export const ChessBoard = ({}) => {
   const game = new Game(
     board,
     setBoard,
+    possibleMoves,
     setPossibleMoves,
     ocasionalMoves,
     setOcasionalMoves,
     playerColor
   );
 
-  const calcPossibleMoves = (piecePosition: string) => {
-    //do some heavy calculations TODO
-    if (piecePosition === 'A4') {
-      setPossibleMoves([
-        { origin: 'A4', direction: 'A3', type: 'move' },
-        { origin: 'A4', direction: 'B3', type: 'capture' },
-      ]);
-    } else {
-      setPossibleMoves([{ origin: 'B4', direction: 'C3', type: 'capture' }]);
-    }
-  };
-
-  const makeMove: MakeMoveFT = ({ origin, direction, type = 'move' }) => {
-    const possibleMove = possibleMoves.find((m) => m.direction === direction);
-    if (!possibleMove) return;
-    if (!(type === 'move' || type === 'capture')) return;
-    const boardCoppy = new Map(board);
-    const movedPiece = boardCoppy.get(origin);
-    if (!movedPiece) return;
-    boardCoppy.set(direction, movedPiece);
-    boardCoppy.delete(origin);
-
-    setBoard(boardCoppy);
-    setPossibleMoves([]);
-  };
-
   const renderMoves = (moves: PossibleMove[]) => {
     return moves.map((move) => (
       <MoveHint
         origin={move.origin}
         direction={move.direction}
-        type={move.type}
-        makeMove={makeMove}
+        type={move.type === 'capture' ? 'capture' : 'move'}
+        makeMove={game.makeMove}
       />
     ));
   };
@@ -117,7 +86,7 @@ export const ChessBoard = ({}) => {
         figure={figure}
         boardRef={chessboardRef}
         ownPiece={color === playerColor}
-        makeMove={makeMove}
+        makeMove={game.makeMove}
         calcPossibleMoves={game.getMoves}
         key={color + figure + position}
       />

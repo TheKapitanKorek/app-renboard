@@ -3,7 +3,7 @@ import { RefObject } from 'react';
 
 export type Color = 'w' | 'b';
 
-export type Figure = 'p' | 'k';
+export type Figure = 'p' | 'k' | 'q';
 
 export interface PieceMapElement {
   figure: Figure;
@@ -13,10 +13,12 @@ export interface PieceMapElement {
 export interface PossibleMove {
   origin: SquareString;
   direction: SquareString;
-  type: 'move' | 'capture';
+  type: 'move' | 'capture' | 'enpassant' | 'promotion';
+  passedPawn?: SquareString;
 }
 
 export type OcasionalMove = PossibleMove;
+
 export type CalcPossibleMovesFT = (position: SquareString, figure: Figure) => void;
 
 export type MakeMoveFT = ({

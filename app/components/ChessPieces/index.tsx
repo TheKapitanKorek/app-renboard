@@ -59,8 +59,6 @@ export const Piece = ({
       if (!ownPiece) return;
       const rect = ref.current!.getBoundingClientRect();
       const boardRect = boardRef.current!.getBoundingClientRect();
-      console.log(boardRef);
-      console.log(event);
       const { pageX, pageY } = event as MouseEvent;
 
       if (
