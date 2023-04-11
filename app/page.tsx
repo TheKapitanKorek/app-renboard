@@ -1,9 +1,9 @@
-import { Inter } from "next/font/google";
+import { Inter } from 'next/font/google';
 
 export default function Home() {
   return (
     <main>
-      <div>Hello</div>
+      <h1>Hello</h1>
     </main>
   );
 }
