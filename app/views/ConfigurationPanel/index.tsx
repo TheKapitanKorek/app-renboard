@@ -27,13 +27,17 @@ export const ConfigurationPanel = () => {
   const GameIcon = gameModesIconMap[gameMode.mode];
 
   return (
-    <form className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[85vh] w-full">
+    <form
+      className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[85vh] w-full"
+      data-testid="config-panel"
+    >
       <button
         type="button"
         className="flex flex-row rounded-md border-box border-2 p-1 border-onyx hover:bg-onyx hover:text-skin justify-center items-center relative"
         onClick={() => {
           setExpanded(!expanded);
         }}
+        data-testid="mode-select-button"
       >
         <GameIcon size={20} />
         <p className="ml-2">{gameMode.time.replace('_', ' ')}</p>
@@ -78,7 +82,7 @@ export const ConfigurationPanel = () => {
           <StyledRadioButton id="10_min-magic" name="gametype">
             10 min
           </StyledRadioButton>
-          <StyledRadioButton id="30_min-magic" name="gametype">
+          <StyledRadioButton id="30_min-magic" name="gametype" data-testid="select-mode">
             30 min
           </StyledRadioButton>
         </ul>

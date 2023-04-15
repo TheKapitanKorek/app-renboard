@@ -4,7 +4,7 @@ import { useGesture } from '@use-gesture/react';
 import { RefObject, useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { boardSize, cordToLetterMap } from '@/app/constants';
+import { SquareString, boardSize, cordToLetterMap } from '@/app/constants';
 import { PieceInterface, MoveHintInterface } from '@/app/methods/game/interfaces';
 
 export const Piece = ({
@@ -76,7 +76,7 @@ export const Piece = ({
           yCord = Math.floor((pageY - boardRect.top) / rect.height);
         }
         // @ts-ignore
-        const square = cordToLetterMap[xCord] + (yCord + 1);
+        const square = (cordToLetterMap.get(xCord) + (yCord + 1)) as SquareString;
 
         makeMove({ origin: position, direction: square });
       }

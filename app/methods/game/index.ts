@@ -1,4 +1,11 @@
-import { SquareString, cordToLetterMap, letterToCordMap, boardSize } from '@/app/constants';
+import {
+  SquareString,
+  cordToLetterMap,
+  letterToCordMap,
+  boardSize,
+  yCordType,
+  xCordType,
+} from '@/app/constants';
 import {
   PieceMapElement,
   PossibleMove,
@@ -9,10 +16,10 @@ import {
 } from './interfaces';
 
 const getCords = (position: SquareString) => {
-  return [Number(letterToCordMap[position[0]]) - 1, Number(position.slice(1)) - 1];
+  return [Number(letterToCordMap.get(position[0] as xCordType)), Number(position.slice(1)) - 1];
 };
 const getPosition = (cords: [number, number]) => {
-  return `${cordToLetterMap[`${cords[0]}`]}${cords[1] + 1}` as SquareString;
+  return `${cordToLetterMap.get(cords[0] as yCordType)}${cords[1] + 1}` as SquareString;
 };
 
 export class Game {
