@@ -102,6 +102,8 @@ export class Game {
       case 'k':
         moveMethod = this.kingMoves;
         break;
+      case 'q':
+        moveMethod = this.kingMoves; //TODO make queen moves
     }
     const moves = moveMethod(position, this.color);
     const safeMoves = this.ensureKingSafety(moves);
