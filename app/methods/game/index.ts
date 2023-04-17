@@ -15,10 +15,10 @@ import {
   MakeMoveFT,
 } from './interfaces';
 
-const getCords = (position: SquareString) => {
+export const getCords = (position: SquareString) => {
   return [Number(letterToCordMap.get(position[0] as xCordType)), Number(position.slice(1)) - 1];
 };
-const getPosition = (cords: [number, number]) => {
+export const getPosition = (cords: [yCordType, yCordType]) => {
   return `${cordToLetterMap.get(cords[0] as yCordType)}${cords[1] + 1}` as SquareString;
 };
 

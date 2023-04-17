@@ -1,5 +1,5 @@
 'use client';
-
+/* c8 ignore start */
 import { useRef, useState } from 'react';
 import { Piece, MoveHint } from '@/app/components/ChessPieces';
 import { SquareString } from '@/app/constants';
@@ -95,7 +95,7 @@ export const ChessBoard = ({}) => {
   };
 
   return (
-    <div className="w-max mx-5 flex-col basis-2/3 items-center">
+    <div className="w-max mx-5 flex-col basis-2/3 items-center" data-testid="chess-board">
       <PlayerField username="player1" time={600} />
       <div id="chess-board" className={playerColor === 'b' ? 'black' : 'white'}>
         <div id="board" ref={chessboardRef}>

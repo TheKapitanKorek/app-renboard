@@ -27,10 +27,7 @@ export const ConfigurationPanel = () => {
   const GameIcon = gameModesIconMap[gameMode.mode];
 
   return (
-    <form
-      className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[85vh] w-full"
-      data-testid="config-panel"
-    >
+    <form className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[85vh] w-full">
       <button
         type="button"
         className="flex flex-row rounded-md border-box border-2 p-1 border-onyx hover:bg-onyx hover:text-skin justify-center items-center relative"
@@ -50,13 +47,14 @@ export const ConfigurationPanel = () => {
       </button>
       <fieldset
         role="radiogroup"
-        className={`expandable-select ${expanded ? '' : ' hidden'}`}
+        className={`expandable-select${expanded ? '' : ' hidden'}`}
         onChange={(e) => {
           const target = e.target as HTMLFieldSetElement;
           const [time, mode] = target.id.split('-');
           setExpanded(false);
           setGameMode({ time, mode });
         }}
+        data-testid="config-panel"
       >
         <h2 className="flex flex-row items-center border-b-2 my-2 border-onyx">
           Normal <FaChessPawn className="ml-2" />
@@ -82,7 +80,7 @@ export const ConfigurationPanel = () => {
           <StyledRadioButton id="10_min-magic" name="gametype">
             10 min
           </StyledRadioButton>
-          <StyledRadioButton id="30_min-magic" name="gametype" data-testid="select-mode">
+          <StyledRadioButton id="30_min-magic" name="gametype">
             30 min
           </StyledRadioButton>
         </ul>

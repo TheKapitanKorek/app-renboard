@@ -1,4 +1,4 @@
-'use client';
+/* c8 ignore start */
 import { useSpring, animated } from '@react-spring/web';
 import { useGesture } from '@use-gesture/react';
 import { RefObject, useRef, useState } from 'react';

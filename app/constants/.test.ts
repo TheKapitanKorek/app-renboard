@@ -1,4 +1,3 @@
-import { test, expect } from 'vitest';
 import { letterToCordMap, cordToLetterMap, boardSize } from './index';
 
 test('letterToCordMap works', () => {

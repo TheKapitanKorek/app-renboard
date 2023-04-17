@@ -1,6 +1,3 @@
-import { AiFillThunderbolt } from 'react-icons/ai';
-import { MdKeyboardArrowDown } from 'react-icons/md';
-
 interface ButtonInterface {
   onClick?: () => {};
   children: string;
@@ -23,11 +20,7 @@ export const Button = ({ onClick, children }: ButtonInterface): JSX.Element => {
   );
 };
 
-export const StyledRadioButton = ({
-  id,
-  name,
-  children,
-}: RadioButtonInterface): JSX.Element => {
+export const StyledRadioButton = ({ id, name, children }: RadioButtonInterface): JSX.Element => {
   return (
     <>
       <input type="radio" id={id} name={name} className="invisible-radio" />
@@ -41,10 +34,7 @@ export const StyledRadioButton = ({
   );
 };
 
-export const ButtonPrimary = ({
-  onClick,
-  children,
-}: ButtonInterface): JSX.Element => {
+export const ButtonPrimary = ({ onClick, children }: ButtonInterface): JSX.Element => {
   return (
     <button
       onClick={onClick}
