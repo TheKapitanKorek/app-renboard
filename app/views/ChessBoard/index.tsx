@@ -50,7 +50,8 @@ export const ChessBoard = ({}) => {
       ['B4', { figure: 'p', color: 'b' }],
       ['B3', { figure: 'p', color: 'w' }],
       ['A4', { figure: 'p', color: 'b' }],
-      ['C3', { figure: 'p', color: 'w' }],
+      ['C2', { figure: 'p', color: 'w' }],
+      ['D4', { figure: 'p', color: 'b' }],
     ])
   );
   const [playerColor, setPlayerColor] = useState<Color>('w');
@@ -64,7 +65,8 @@ export const ChessBoard = ({}) => {
     setPossibleMoves,
     ocasionalMoves,
     setOcasionalMoves,
-    playerColor
+    playerColor,
+    setPlayerColor
   );
 
   const renderMoves = (moves: PossibleMove[]) => {

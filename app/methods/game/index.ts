@@ -18,7 +18,7 @@ import {
 export const getCords = (position: SquareString) => {
   return [Number(letterToCordMap.get(position[0] as xCordType)), Number(position.slice(1)) - 1];
 };
-export const getPosition = (cords: [yCordType, yCordType]) => {
+export const getPosition = (cords: [number, number]) => {
   return `${cordToLetterMap.get(cords[0] as yCordType)}${cords[1] + 1}` as SquareString;
 };
 
@@ -30,7 +30,8 @@ export class Game {
     private setPossibleMoves: (moves: PossibleMove[]) => void,
     private ocasionalMoves: OcasionalMove[],
     private setOcasionalMoves: (moves: OcasionalMove[]) => void,
-    private color: Color
+    private color: Color,
+    private setColor: (color: Color) => void
   ) {}
 
   private pawnMoves = (position: SquareString, color: Color) => {
@@ -85,6 +86,8 @@ export class Game {
     return possibleMoves;
   };
 
+  private checkEnpasant = () => {};
+
   private kingMoves = (position: SquareString, color: Color) => {
     return [];
   };
@@ -127,7 +130,46 @@ export class Game {
       boardCoppy.delete(captured);
     }
 
+    // set ocasional moves like enpasant
+    let createdEnPasants: OcasionalMove[] = [];
+    if (movedPiece.figure === 'p') {
+      const [originX, originY] = getCords(origin);
+      const [directionX, directionY] = getCords(direction);
+      if (Math.abs(directionY - originY) === 2) {
+        let potentialEnemyPassedPawns: [number, number][];
+        switch (originX) {
+          case 0:
+            potentialEnemyPassedPawns = [[originX + 1, directionY]];
+            break;
+          case boardSize - 1:
+            potentialEnemyPassedPawns = [[originX - 1, directionY]];
+            break;
+          default:
+            potentialEnemyPassedPawns = [
+              [originX + 1, directionY],
+              [originX - 1, directionY],
+            ];
+            break;
+        }
+        potentialEnemyPassedPawns.forEach((potentialPawn) => {
+          const position = getPosition(potentialPawn);
+          const passedFigure = boardCoppy.get(position);
+          if (passedFigure?.figure === 'p' && passedFigure?.color != movedPiece.color) {
+            const marchSide = movedPiece.color === 'w' ? 1 : -1;
+            const enPasantCaputureDestinaiton = getPosition([originX, originY + marchSide]);
+            createdEnPasants.push({
+              origin: position,
+              direction: enPasantCaputureDestinaiton,
+              type: 'enpassant',
+              passedPawn: direction,
+            });
+          }
+        });
+      }
+    }
+    this.setOcasionalMoves([...createdEnPasants]);
     this.setBoard(boardCoppy);
+    //this.setColor(this.color === 'w' ? 'b' : 'w');
     this.setPossibleMoves([]);
   };
 }
