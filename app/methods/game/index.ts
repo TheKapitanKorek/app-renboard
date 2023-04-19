@@ -13,6 +13,8 @@ import {
   Color,
   Figure,
   MakeMoveFT,
+  PieceInterface,
+  VectorArray,
 } from './interfaces';
 
 export const getCords = (position: SquareString) => {
@@ -42,9 +44,7 @@ export class Game {
     const travelToBoardEnd = (color === 'w' ? boardSize - 1 : 0) === y + marchSide;
     //moves
     const oneSquareAhead = getPosition([x, y + marchSide]);
-    console.log(oneSquareAhead);
     const pieceOnWay = this.board.get(oneSquareAhead);
-    console.log('piece', pieceOnWay);
     if (!pieceOnWay) {
       possibleMoves.push({
         origin: position,
@@ -86,17 +86,39 @@ export class Game {
     return possibleMoves;
   };
 
-  private checkEnpasant = () => {};
+  private collisionLessMoves = (position: SquareString, color: Color, vectorArray: VectorArray) => {
+    const possibleMoves: PossibleMove[] = [];
+    const [currentX, currentY] = getCords(position);
+    vectorArray.forEach(([xDir, yDir]) => {
+      const newX = currentX + xDir;
+      const newY = currentY + yDir;
+      if (newX < 0 || newX > boardSize - 1 || newY < 0 || newY > boardSize - 1) return;
+      const newPosition = getPosition([newX, newY]);
+      const pieceOnWay = this.board.get(newPosition);
+      if (!pieceOnWay) {
+        possibleMoves.push({ origin: position, direction: newPosition, type: 'move' });
+      } else if (pieceOnWay.color !== color) {
+        possibleMoves.push({ origin: position, direction: newPosition, type: 'capture' });
+      }
+    });
+    return possibleMoves;
+  };
 
   private kingMoves = (position: SquareString, color: Color) => {
-    return [];
+    const moveDirections: VectorArray = [
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, 1],
+      [0, -1],
+      [-1, 1],
+      [-1, 0],
+      [-1, -1],
+    ];
+    return this.collisionLessMoves(position, color, moveDirections);
   };
 
-  private ensureKingSafety = (moves: PossibleMove[]) => {
-    return moves;
-  };
-
-  public getMoves = (position: SquareString, figure: Figure) => {
+  private getMoves = (position: SquareString, figure: Figure) => {
     let moveMethod;
     switch (figure) {
       case 'p':
@@ -108,7 +130,51 @@ export class Game {
       case 'q':
         moveMethod = this.kingMoves; //TODO make queen moves
     }
-    const moves = moveMethod(position, this.color);
+    return moveMethod(position, this.color);
+  };
+
+  private ensureKingSafety = (moves: PossibleMove[]) => {
+    return moves.filter((move) => {
+      //make move on coppy of the board
+      const boardCoppy = new Map(this.board);
+      const movedPiece = boardCoppy.get(move.origin);
+      if (!movedPiece) throw new Error('Error calculating move for piece that does not exist!');
+      if (move.type === 'promotion') {
+        boardCoppy.set(move.direction, { ...movedPiece, figure: 'q' });
+      } else {
+        boardCoppy.set(move.direction, movedPiece);
+      }
+      boardCoppy.delete(move.origin);
+      if (move.type === 'enpassant') {
+        const captured = move.passedPawn as SquareString;
+        boardCoppy.delete(captured);
+      }
+      //find players king and check if it is safe
+      boardCoppy.values;
+      const boardSetup = [...boardCoppy];
+      const playerKing = boardSetup.find(([square, piece]) => {
+        piece.figure === 'k' && piece.color === this.color;
+      });
+      // some game varians may allow one side not to have king so if it isnt present on the board just allow any move
+
+      if (!playerKing) return true;
+
+      boardSetup.forEach(([square, piece]) => {
+        if (piece.color != this.color) {
+          const enemyPiecePossibleMoves = this.getMoves.apply(boardCoppy, [square, piece.figure]);
+          const attackOnKing = enemyPiecePossibleMoves.find(
+            ({ direction }) => direction === playerKing[0]
+          );
+          //move is unsafe filter it out
+          if (attackOnKing) return false;
+        }
+      });
+      return true;
+    });
+  };
+
+  public setMoves = (position: SquareString, figure: Figure) => {
+    const moves = this.getMoves(position, figure);
     const safeMoves = this.ensureKingSafety(moves);
     this.setPossibleMoves(safeMoves);
   };
@@ -173,24 +239,3 @@ export class Game {
     this.setPossibleMoves([]);
   };
 }
-/*
-// check for potential en-passant
-let potentialEnemyPassedPawns: [number, number][];
-switch (x) {
-  case 0:
-    potentialEnemyPassedPawns = [[x + 1, y + 2]];
-  case boardSize - 1:
-    potentialEnemyPassedPawns = [[x - 1, y + 2]];
-  default:
-    potentialEnemyPassedPawns = [
-      [x + 1, y + 2],
-      [x - 1, y + 2],
-    ];
-}
-potentialEnemyPassedPawns.forEach((pos) => {
-  const sq = getPosition(pos);
-  const piece = this.board.get(sq);
-  if (piece && piece.color !== color && piece.figure === 'p') {
-  }
-});
-*/

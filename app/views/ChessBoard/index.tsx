@@ -52,6 +52,8 @@ export const ChessBoard = ({}) => {
       ['A4', { figure: 'p', color: 'b' }],
       ['C2', { figure: 'p', color: 'w' }],
       ['D4', { figure: 'p', color: 'b' }],
+      ['E2', { figure: 'k', color: 'w' }],
+      ['F6', { figure: 'k', color: 'b' }],
     ])
   );
   const [playerColor, setPlayerColor] = useState<Color>('w');
@@ -90,7 +92,7 @@ export const ChessBoard = ({}) => {
         boardRef={chessboardRef}
         ownPiece={color === playerColor}
         makeMove={game.makeMove}
-        calcPossibleMoves={game.getMoves}
+        calcPossibleMoves={game.setMoves}
         key={color + figure + position}
       />
     ));

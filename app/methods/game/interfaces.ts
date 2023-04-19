@@ -5,6 +5,8 @@ export type Color = 'w' | 'b';
 
 export type Figure = 'p' | 'k' | 'q';
 
+export type VectorArray = [number, number][];
+
 export interface PieceMapElement {
   figure: Figure;
   color: 'w' | 'b';
