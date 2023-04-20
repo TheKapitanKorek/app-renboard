@@ -36,7 +36,11 @@ export class Game {
     private setColor: (color: Color) => void
   ) {}
 
-  private pawnMoves = (position: SquareString, color: Color) => {
+  private pawnMoves = (
+    position: SquareString,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
     const possibleMoves = [...this.ocasionalMoves]; // adding possible enpassant moves
     const [x, y] = getCords(position);
     const marchSide = color === 'w' ? 1 : -1;
@@ -44,7 +48,7 @@ export class Game {
     const travelToBoardEnd = (color === 'w' ? boardSize - 1 : 0) === y + marchSide;
     //moves
     const oneSquareAhead = getPosition([x, y + marchSide]);
-    const pieceOnWay = this.board.get(oneSquareAhead);
+    const pieceOnWay = board.get(oneSquareAhead);
     if (!pieceOnWay) {
       possibleMoves.push({
         origin: position,
@@ -53,7 +57,7 @@ export class Game {
       });
       if (y === pawnStartingPosition) {
         const twoSquaresAhead = getPosition([x, y + 2 * marchSide]);
-        const pieceOnWay = this.board.get(twoSquaresAhead);
+        const pieceOnWay = board.get(twoSquaresAhead);
         if (!pieceOnWay) {
           possibleMoves.push({ origin: position, direction: twoSquaresAhead, type: 'move' });
         }
@@ -74,7 +78,7 @@ export class Game {
     }
     diagonalSquares.forEach((pos) => {
       const sq = getPosition(pos);
-      const piece = this.board.get(sq);
+      const piece = board.get(sq);
       if (piece && piece.color !== color) {
         possibleMoves.push({
           origin: position,
@@ -86,7 +90,12 @@ export class Game {
     return possibleMoves;
   };
 
-  private collisionLessMoves = (position: SquareString, color: Color, vectorArray: VectorArray) => {
+  private collisionLessMoves = (
+    position: SquareString,
+    color: Color,
+    vectorArray: VectorArray,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
     const possibleMoves: PossibleMove[] = [];
     const [currentX, currentY] = getCords(position);
     vectorArray.forEach(([xDir, yDir]) => {
@@ -94,7 +103,7 @@ export class Game {
       const newY = currentY + yDir;
       if (newX < 0 || newX > boardSize - 1 || newY < 0 || newY > boardSize - 1) return;
       const newPosition = getPosition([newX, newY]);
-      const pieceOnWay = this.board.get(newPosition);
+      const pieceOnWay = board.get(newPosition);
       if (!pieceOnWay) {
         possibleMoves.push({ origin: position, direction: newPosition, type: 'move' });
       } else if (pieceOnWay.color !== color) {
@@ -118,7 +127,12 @@ export class Game {
     return this.collisionLessMoves(position, color, moveDirections);
   };
 
-  private getMoves = (position: SquareString, figure: Figure) => {
+  private getMoves = (
+    position: SquareString,
+    figure: Figure,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
     let moveMethod;
     switch (figure) {
       case 'p':
@@ -130,12 +144,13 @@ export class Game {
       case 'q':
         moveMethod = this.kingMoves; //TODO make queen moves
     }
-    return moveMethod(position, this.color);
+    return moveMethod(position, color, board);
   };
 
   private ensureKingSafety = (moves: PossibleMove[]) => {
     return moves.filter((move) => {
       //make move on coppy of the board
+      const opositeColor = this.color === 'w' ? 'b' : 'w';
       const boardCoppy = new Map(this.board);
       const movedPiece = boardCoppy.get(move.origin);
       if (!movedPiece) throw new Error('Error calculating move for piece that does not exist!');
@@ -153,28 +168,34 @@ export class Game {
       boardCoppy.values;
       const boardSetup = [...boardCoppy];
       const playerKing = boardSetup.find(([square, piece]) => {
-        piece.figure === 'k' && piece.color === this.color;
+        return piece.figure === 'k' && piece.color === this.color;
       });
       // some game varians may allow one side not to have king so if it isnt present on the board just allow any move
-
+      console.log('hey');
       if (!playerKing) return true;
-
-      boardSetup.forEach(([square, piece]) => {
-        if (piece.color != this.color) {
-          const enemyPiecePossibleMoves = this.getMoves.apply(boardCoppy, [square, piece.figure]);
+      console.log('ho');
+      for (const [square, piece] of boardSetup) {
+        if (piece.color === opositeColor) {
+          const enemyPiecePossibleMoves = this.getMoves(
+            square,
+            piece.figure,
+            opositeColor,
+            boardCoppy
+          );
+          console.log(enemyPiecePossibleMoves);
           const attackOnKing = enemyPiecePossibleMoves.find(
-            ({ direction }) => direction === playerKing[0]
+            ({ direction, type }) => direction === playerKing[0]
           );
           //move is unsafe filter it out
           if (attackOnKing) return false;
         }
-      });
+      }
       return true;
     });
   };
 
   public setMoves = (position: SquareString, figure: Figure) => {
-    const moves = this.getMoves(position, figure);
+    const moves = this.getMoves(position, figure, this.color);
     const safeMoves = this.ensureKingSafety(moves);
     this.setPossibleMoves(safeMoves);
   };
