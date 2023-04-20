@@ -113,7 +113,11 @@ export class Game {
     return possibleMoves;
   };
 
-  private kingMoves = (position: SquareString, color: Color) => {
+  private kingMoves = (
+    position: SquareString,
+    color: Color = this.color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
     const moveDirections: VectorArray = [
       [1, 1],
       [1, 0],
@@ -124,7 +128,7 @@ export class Game {
       [-1, 0],
       [-1, -1],
     ];
-    return this.collisionLessMoves(position, color, moveDirections);
+    return this.collisionLessMoves(position, color, moveDirections, board);
   };
 
   private getMoves = (
@@ -188,7 +192,8 @@ export class Game {
         const captured = move.passedPawn as SquareString;
         boardCoppy.delete(captured);
       }
-      return !this.kingInCheck(boardCoppy, color);
+      const check = this.kingInCheck(boardCoppy, color);
+      return !check;
     });
   };
 
@@ -229,7 +234,7 @@ export class Game {
       const captured = possibleMove.passedPawn as SquareString;
       boardCoppy.delete(captured);
     }
-    console.log(this.checkMates(boardCoppy));
+
     // set ocasional moves like enpasant
     let createdEnPasants: OcasionalMove[] = [];
     if (movedPiece.figure === 'p') {
