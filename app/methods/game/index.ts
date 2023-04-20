@@ -131,6 +131,25 @@ export class Game {
     return this.collisionLessMoves(position, color, moveDirections, board);
   };
 
+  private kinghtMoves = (
+    position: SquareString,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
+    const moveDirections: VectorArray = [
+      [-1, 2],
+      [1, 2],
+      [2, 1],
+      [2, -1],
+      [-1, -2],
+      [1, -2],
+      [-2, 1],
+      [-2, -1],
+    ];
+    console.log(this.collisionLessMoves(position, color, moveDirections, board));
+    return this.collisionLessMoves(position, color, moveDirections, board);
+  };
+
   private getMoves = (
     position: SquareString,
     figure: Figure,
@@ -144,6 +163,9 @@ export class Game {
         break;
       case 'k':
         moveMethod = this.kingMoves;
+        break;
+      case 'n':
+        moveMethod = this.kinghtMoves;
         break;
       case 'q':
         moveMethod = this.kingMoves; //TODO make queen moves
@@ -235,6 +257,7 @@ export class Game {
       boardCoppy.delete(captured);
     }
 
+    console.log(this.checkMates(boardCoppy));
     // set ocasional moves like enpasant
     let createdEnPasants: OcasionalMove[] = [];
     if (movedPiece.figure === 'p') {

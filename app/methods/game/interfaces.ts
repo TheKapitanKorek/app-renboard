@@ -3,7 +3,9 @@ import { RefObject } from 'react';
 
 export type Color = 'w' | 'b';
 
-export type Figure = 'p' | 'k' | 'q';
+export type Figure = 'p' | 'k' | 'q' | 'n';
+
+export type MoveType = 'move' | 'capture' | 'enpassant' | 'promotion';
 
 export type VectorArray = [number, number][];
 
@@ -15,7 +17,7 @@ export interface PieceMapElement {
 export interface PossibleMove {
   origin: SquareString;
   direction: SquareString;
-  type: 'move' | 'capture' | 'enpassant' | 'promotion';
+  type: MoveType;
   passedPawn?: SquareString;
 }
 
