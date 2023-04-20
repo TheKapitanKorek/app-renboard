@@ -147,11 +147,35 @@ export class Game {
     return moveMethod(position, color, board);
   };
 
-  private ensureKingSafety = (moves: PossibleMove[]) => {
+  private kingInCheck = (board: Map<SquareString, PieceMapElement>, color: Color) => {
+    //find players king and check if it is safe
+    const opositeColor = color === 'w' ? 'b' : 'w';
+    const boardSetup = [...board];
+    const playerKing = boardSetup.find(([square, piece]) => {
+      return piece.figure === 'k' && piece.color === color;
+    });
+    // some game varians may allow one side not to have king so if it isnt present on the board just allow any move
+    if (!playerKing) return false;
+    for (const [square, piece] of boardSetup) {
+      if (piece.color === opositeColor) {
+        const enemyPiecePossibleMoves = this.getMoves(square, piece.figure, opositeColor, board);
+        const attackOnKing = enemyPiecePossibleMoves.find(
+          ({ direction, type }) => direction === playerKing[0]
+        );
+        if (attackOnKing) return true;
+      }
+    }
+    return false;
+  };
+
+  private ensureKingSafety = (
+    moves: PossibleMove[],
+    color: Color = this.color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
     return moves.filter((move) => {
       //make move on coppy of the board
-      const opositeColor = this.color === 'w' ? 'b' : 'w';
-      const boardCoppy = new Map(this.board);
+      const boardCoppy = new Map(board);
       const movedPiece = boardCoppy.get(move.origin);
       if (!movedPiece) throw new Error('Error calculating move for piece that does not exist!');
       if (move.type === 'promotion') {
@@ -164,33 +188,7 @@ export class Game {
         const captured = move.passedPawn as SquareString;
         boardCoppy.delete(captured);
       }
-      //find players king and check if it is safe
-      boardCoppy.values;
-      const boardSetup = [...boardCoppy];
-      const playerKing = boardSetup.find(([square, piece]) => {
-        return piece.figure === 'k' && piece.color === this.color;
-      });
-      // some game varians may allow one side not to have king so if it isnt present on the board just allow any move
-      console.log('hey');
-      if (!playerKing) return true;
-      console.log('ho');
-      for (const [square, piece] of boardSetup) {
-        if (piece.color === opositeColor) {
-          const enemyPiecePossibleMoves = this.getMoves(
-            square,
-            piece.figure,
-            opositeColor,
-            boardCoppy
-          );
-          console.log(enemyPiecePossibleMoves);
-          const attackOnKing = enemyPiecePossibleMoves.find(
-            ({ direction, type }) => direction === playerKing[0]
-          );
-          //move is unsafe filter it out
-          if (attackOnKing) return false;
-        }
-      }
-      return true;
+      return !this.kingInCheck(boardCoppy, color);
     });
   };
 
@@ -198,6 +196,21 @@ export class Game {
     const moves = this.getMoves(position, figure, this.color);
     const safeMoves = this.ensureKingSafety(moves);
     this.setPossibleMoves(safeMoves);
+  };
+
+  private checkMates = (board: Map<SquareString, PieceMapElement>) => {
+    const opositeColor = this.color === 'w' ? 'b' : 'w';
+    const boardSetup = [...board];
+
+    for (const [square, piece] of boardSetup) {
+      if (piece.color === opositeColor) {
+        const moves = this.getMoves(square, piece.figure, opositeColor, board);
+        const viableMoves = this.ensureKingSafety(moves, opositeColor, board);
+        if (viableMoves.length > 0) return 'nomate';
+      }
+    }
+    const check = this.kingInCheck(board, opositeColor);
+    return check ? 'mate' : 'stelmate';
   };
 
   public makeMove: MakeMoveFT = ({ origin, direction }) => {
@@ -216,7 +229,7 @@ export class Game {
       const captured = possibleMove.passedPawn as SquareString;
       boardCoppy.delete(captured);
     }
-
+    console.log(this.checkMates(boardCoppy));
     // set ocasional moves like enpasant
     let createdEnPasants: OcasionalMove[] = [];
     if (movedPiece.figure === 'p') {
@@ -256,7 +269,7 @@ export class Game {
     }
     this.setOcasionalMoves([...createdEnPasants]);
     this.setBoard(boardCoppy);
-    //this.setColor(this.color === 'w' ? 'b' : 'w');
+    this.setColor(this.color === 'w' ? 'b' : 'w');
     this.setPossibleMoves([]);
   };
 }
