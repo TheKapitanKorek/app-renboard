@@ -16,7 +16,7 @@ export interface PieceMapElement {
 
 export interface PossibleMove {
   origin: SquareString;
-  direction: SquareString;
+  destination: SquareString;
   type: MoveType;
   passedPawn?: SquareString;
 }
@@ -27,11 +27,11 @@ export type CalcPossibleMovesFT = (position: SquareString, figure: Figure) => vo
 
 export type MakeMoveFT = ({
   origin,
-  direction,
+  destination,
   type,
 }: {
   origin: SquareString;
-  direction: SquareString;
+  destination: SquareString;
   type?: string;
 }) => void;
 
@@ -49,7 +49,7 @@ export interface PieceInterface {
 
 export interface MoveHintInterface {
   origin: SquareString;
-  direction: SquareString;
+  destination: SquareString;
   type: string;
   makeMove: MakeMoveFT;
 }

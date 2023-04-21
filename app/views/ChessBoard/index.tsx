@@ -77,9 +77,9 @@ export const ChessBoard = ({}) => {
   const renderMoves = (moves: PossibleMove[]) => {
     return moves.map((move) => (
       <MoveHint
-        key={move.origin + '>' + move.direction}
+        key={move.origin + '>' + move.destination}
         origin={move.origin}
-        direction={move.direction}
+        destination={move.destination}
         type={move.type === 'capture' ? 'capture' : 'move'}
         makeMove={game.makeMove}
       />

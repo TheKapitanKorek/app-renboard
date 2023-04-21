@@ -78,7 +78,7 @@ export const Piece = ({
         // @ts-ignore
         const square = (cordToLetterMap.get(xCord) + (yCord + 1)) as SquareString;
 
-        makeMove({ origin: position, direction: square });
+        makeMove({ origin: position, destination: square });
       }
     },
   });
@@ -107,12 +107,12 @@ export const Piece = ({
   );
 };
 
-export const MoveHint = ({ origin, direction, type, makeMove }: MoveHintInterface) => {
+export const MoveHint = ({ origin, destination, type, makeMove }: MoveHintInterface) => {
   return (
     <div
-      className={`move-hint ${direction}`}
+      className={`move-hint ${destination}`}
       onClick={() => {
-        makeMove({ origin, direction, type });
+        makeMove({ origin, destination, type });
       }}
     >
       <div className={`${type}-mark`}></div>

@@ -52,14 +52,14 @@ export class Game {
     if (!pieceOnWay) {
       possibleMoves.push({
         origin: position,
-        direction: oneSquareAhead,
+        destination: oneSquareAhead,
         type: travelToBoardEnd ? 'promotion' : 'move',
       });
       if (y === pawnStartingPosition) {
         const twoSquaresAhead = getPosition([x, y + 2 * marchSide]);
         const pieceOnWay = board.get(twoSquaresAhead);
         if (!pieceOnWay) {
-          possibleMoves.push({ origin: position, direction: twoSquaresAhead, type: 'move' });
+          possibleMoves.push({ origin: position, destination: twoSquaresAhead, type: 'move' });
         }
       }
     }
@@ -82,7 +82,7 @@ export class Game {
       if (piece && piece.color !== color) {
         possibleMoves.push({
           origin: position,
-          direction: sq,
+          destination: sq,
           type: travelToBoardEnd ? 'promotion' : 'capture',
         });
       }
@@ -105,9 +105,9 @@ export class Game {
       const newPosition = getPosition([newX, newY]);
       const pieceOnWay = board.get(newPosition);
       if (!pieceOnWay) {
-        possibleMoves.push({ origin: position, direction: newPosition, type: 'move' });
+        possibleMoves.push({ origin: position, destination: newPosition, type: 'move' });
       } else if (pieceOnWay.color !== color) {
-        possibleMoves.push({ origin: position, direction: newPosition, type: 'capture' });
+        possibleMoves.push({ origin: position, destination: newPosition, type: 'capture' });
       }
     });
     return possibleMoves;
@@ -118,7 +118,7 @@ export class Game {
     color: Color = this.color,
     board: Map<SquareString, PieceMapElement> = this.board
   ) => {
-    const moveDirections: VectorArray = [
+    const movedirections: VectorArray = [
       [1, 1],
       [1, 0],
       [1, -1],
@@ -128,7 +128,7 @@ export class Game {
       [-1, 0],
       [-1, -1],
     ];
-    return this.collisionLessMoves(position, color, moveDirections, board);
+    return this.collisionLessMoves(position, color, movedirections, board);
   };
 
   private kinghtMoves = (
@@ -136,7 +136,7 @@ export class Game {
     color: Color,
     board: Map<SquareString, PieceMapElement> = this.board
   ) => {
-    const moveDirections: VectorArray = [
+    const movedirections: VectorArray = [
       [-1, 2],
       [1, 2],
       [2, 1],
@@ -146,8 +146,8 @@ export class Game {
       [-2, 1],
       [-2, -1],
     ];
-    console.log(this.collisionLessMoves(position, color, moveDirections, board));
-    return this.collisionLessMoves(position, color, moveDirections, board);
+    console.log(this.collisionLessMoves(position, color, movedirections, board));
+    return this.collisionLessMoves(position, color, movedirections, board);
   };
 
   private getMoves = (
@@ -186,7 +186,7 @@ export class Game {
       if (piece.color === opositeColor) {
         const enemyPiecePossibleMoves = this.getMoves(square, piece.figure, opositeColor, board);
         const attackOnKing = enemyPiecePossibleMoves.find(
-          ({ direction, type }) => direction === playerKing[0]
+          ({ destination, type }) => destination === playerKing[0]
         );
         if (attackOnKing) return true;
       }
@@ -205,9 +205,9 @@ export class Game {
       const movedPiece = boardCoppy.get(move.origin);
       if (!movedPiece) throw new Error('Error calculating move for piece that does not exist!');
       if (move.type === 'promotion') {
-        boardCoppy.set(move.direction, { ...movedPiece, figure: 'q' });
+        boardCoppy.set(move.destination, { ...movedPiece, figure: 'q' });
       } else {
-        boardCoppy.set(move.direction, movedPiece);
+        boardCoppy.set(move.destination, movedPiece);
       }
       boardCoppy.delete(move.origin);
       if (move.type === 'enpassant') {
@@ -240,16 +240,16 @@ export class Game {
     return check ? 'mate' : 'stelmate';
   };
 
-  public makeMove: MakeMoveFT = ({ origin, direction }) => {
-    const possibleMove = this.possibleMoves.find((m) => m.direction === direction);
+  public makeMove: MakeMoveFT = ({ origin, destination }) => {
+    const possibleMove = this.possibleMoves.find((m) => m.destination === destination);
     if (!possibleMove) return;
     const boardCoppy = new Map(this.board);
     const movedPiece = boardCoppy.get(origin);
     if (!movedPiece) return;
     if (possibleMove.type === 'promotion') {
-      boardCoppy.set(direction, { ...movedPiece, figure: 'q' });
+      boardCoppy.set(destination, { ...movedPiece, figure: 'q' });
     } else {
-      boardCoppy.set(direction, movedPiece);
+      boardCoppy.set(destination, movedPiece);
     }
     boardCoppy.delete(origin);
     if (possibleMove.type === 'enpassant') {
@@ -262,20 +262,20 @@ export class Game {
     let createdEnPasants: OcasionalMove[] = [];
     if (movedPiece.figure === 'p') {
       const [originX, originY] = getCords(origin);
-      const [directionX, directionY] = getCords(direction);
-      if (Math.abs(directionY - originY) === 2) {
+      const [destinationX, destinationY] = getCords(destination);
+      if (Math.abs(destinationY - originY) === 2) {
         let potentialEnemyPassedPawns: [number, number][];
         switch (originX) {
           case 0:
-            potentialEnemyPassedPawns = [[originX + 1, directionY]];
+            potentialEnemyPassedPawns = [[originX + 1, destinationY]];
             break;
           case boardSize - 1:
-            potentialEnemyPassedPawns = [[originX - 1, directionY]];
+            potentialEnemyPassedPawns = [[originX - 1, destinationY]];
             break;
           default:
             potentialEnemyPassedPawns = [
-              [originX + 1, directionY],
-              [originX - 1, directionY],
+              [originX + 1, destinationY],
+              [originX - 1, destinationY],
             ];
             break;
         }
@@ -287,9 +287,9 @@ export class Game {
             const enPasantCaputureDestinaiton = getPosition([originX, originY + marchSide]);
             createdEnPasants.push({
               origin: position,
-              direction: enPasantCaputureDestinaiton,
+              destination: enPasantCaputureDestinaiton,
               type: 'enpassant',
-              passedPawn: direction,
+              passedPawn: destination,
             });
           }
         });
