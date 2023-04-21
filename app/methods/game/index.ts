@@ -15,6 +15,7 @@ import {
   MakeMoveFT,
   PieceInterface,
   VectorArray,
+  MoveType,
 } from './interfaces';
 
 export const getCords = (position: SquareString) => {
@@ -146,9 +147,43 @@ export class Game {
       [-2, 1],
       [-2, -1],
     ];
-    console.log(this.collisionLessMoves(position, color, movedirections, board));
     return this.collisionLessMoves(position, color, movedirections, board);
   };
+
+  private bishopMoves(
+    position: SquareString,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) {
+    const possibleMoves: PossibleMove[] = [];
+    const directionVectors = [
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1],
+    ];
+    const [currentX, currentY] = getCords(position);
+    const opositeColor = color === 'w' ? 'b' : 'w';
+    directionVectors.forEach(([x, y]) => {
+      for (let i = 1; i < boardSize - 2; i++) {
+        const newX = currentX + x * i;
+        const newY = currentY + y * i;
+        if (newX < 0 || newX > boardSize - 1 || newY < 0 || newY > boardSize - 1) return;
+        const newPosition = getPosition([newX, newY]);
+        const pieceOnWay = board.get(newPosition);
+        if (!pieceOnWay) {
+          possibleMoves.push({ origin: position, destination: newPosition, type: 'move' });
+        } else {
+          if (pieceOnWay.color === opositeColor) {
+            possibleMoves.push({ origin: position, destination: newPosition, type: 'capture' });
+          }
+          return;
+        }
+      }
+    });
+
+    return possibleMoves;
+  }
 
   private getMoves = (
     position: SquareString,
@@ -166,6 +201,9 @@ export class Game {
         break;
       case 'n':
         moveMethod = this.kinghtMoves;
+        break;
+      case 'b':
+        moveMethod = this.bishopMoves;
         break;
       case 'q':
         moveMethod = this.kingMoves; //TODO make queen moves
@@ -257,7 +295,6 @@ export class Game {
       boardCoppy.delete(captured);
     }
 
-    console.log(this.checkMates(boardCoppy));
     // set ocasional moves like enpasant
     let createdEnPasants: OcasionalMove[] = [];
     if (movedPiece.figure === 'p') {
