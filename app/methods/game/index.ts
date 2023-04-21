@@ -13,9 +13,8 @@ import {
   Color,
   Figure,
   MakeMoveFT,
-  PieceInterface,
   VectorArray,
-  MoveType,
+  King,
 } from './interfaces';
 
 export const getCords = (position: SquareString) => {
@@ -124,7 +123,7 @@ export class Game {
     const [currentX, currentY] = getCords(position);
     const opositeColor = color === 'w' ? 'b' : 'w';
     vectorArray.forEach(([x, y]) => {
-      for (let i = 1; i < boardSize - 2; i++) {
+      for (let i = 1; i < boardSize; i++) {
         const newX = currentX + x * i;
         const newY = currentY + y * i;
         if (newX < 0 || newX > boardSize - 1 || newY < 0 || newY > boardSize - 1) return;
@@ -141,6 +140,16 @@ export class Game {
       }
     });
     return possibleMoves;
+  };
+
+  private castles = (
+    position: SquareString,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
+    const king = board.get(position) as King;
+    if (king.canLongCastle) {
+    }
   };
 
   private kingMoves = (
@@ -331,6 +340,27 @@ export class Game {
       boardCoppy.set(destination, { ...movedPiece, figure: 'q' });
     } else {
       boardCoppy.set(destination, movedPiece);
+      //check if moved piece is a king or rook to disable future castle options
+      if (movedPiece.figure === 'k') {
+        boardCoppy.set(destination, { ...movedPiece, canLongCastle: false, canShortCastle: false });
+      } else if (movedPiece.figure === 'r') {
+        const [originX, originY] = getCords(origin);
+        if (
+          (movedPiece.color === 'w' && originX === 0 && originY === 0) ||
+          (movedPiece.color === 'b' && originX === 0 && originY === boardSize - 1)
+        ) {
+          boardCoppy.set(destination, { ...movedPiece, canShortCastle: false });
+        } else if (
+          (movedPiece.color === 'w' && originX === boardSize - 1 && originY === 0) ||
+          (movedPiece.color === 'b' && originX === boardSize - 1 && originY === boardSize - 1)
+        ) {
+          boardCoppy.set(destination, { ...movedPiece, canLongCastle: false });
+        } else {
+          boardCoppy.set(destination, movedPiece);
+        }
+      } else {
+        boardCoppy.set(destination, movedPiece);
+      }
     }
     boardCoppy.delete(origin);
     if (possibleMove.type === 'enpassant') {

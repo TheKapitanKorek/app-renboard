@@ -53,7 +53,7 @@ export const ChessBoard = ({}) => {
       ['C2', { figure: 'p', color: 'w' }],
       ['D4', { figure: 'p', color: 'b' }],
       ['D3', { figure: 'k', color: 'w' }],
-      ['D5', { figure: 'k', color: 'b' }],
+      ['D5', { figure: 'k', color: 'b', canShortCastle: true, canLongCastle: true }],
       ['D8', { figure: 'n', color: 'b' }],
       ['A1', { figure: 'n', color: 'w' }],
       ['A2', { figure: 'n', color: 'w' }],

@@ -1,3 +1,4 @@
+import { Piece } from '@/app/components/ChessPieces';
 import { SquareString } from '@/app/constants';
 import { RefObject } from 'react';
 
@@ -9,10 +10,17 @@ export type MoveType = 'move' | 'capture' | 'enpassant' | 'promotion';
 
 export type VectorArray = [number, number][];
 
-export interface PieceMapElement {
+export interface Piece {
   figure: Figure;
   color: 'w' | 'b';
 }
+
+export interface King extends Piece {
+  canLongCastle: boolean;
+  canShortCastle: boolean;
+}
+
+export type PieceMapElement = Piece | King;
 
 export interface PossibleMove {
   origin: SquareString;
