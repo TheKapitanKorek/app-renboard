@@ -15,6 +15,7 @@ import {
   MakeMoveFT,
   VectorArray,
   King,
+  Piece,
 } from './interfaces';
 
 export const getCords = (position: SquareString) => {
@@ -147,9 +148,53 @@ export class Game {
     color: Color,
     board: Map<SquareString, PieceMapElement> = this.board
   ) => {
+    if (boardSize <= 4) return [];
+    const possibelMoves: PossibleMove[] = [];
     const king = board.get(position) as King;
-    if (king.canLongCastle) {
-    }
+    const castleDirections = [];
+    if (king.canLongCastle) castleDirections.push(-1);
+    if (king.canShortCastle) castleDirections.push(1);
+    castleDirections.forEach((castleDirection) => {
+      const boardCoppy = new Map(board);
+      const [currentX, currentY] = getCords(position);
+      // chech if there are any pieces between the king and rook
+      const adjutment = castleDirection === -1 ? 1 : 0;
+      const boardCorner = boardSize / 2 + adjutment;
+      for (let i = 1; i < boardCorner; i++) {
+        const newPosition = getPosition([currentX + i * castleDirection, currentY]);
+        const pieceOnTheWay = boardCoppy.get(newPosition);
+        if (pieceOnTheWay) {
+          if (i !== boardCorner - 1) return;
+          if (
+            i === boardCorner - 1 &&
+            !(pieceOnTheWay.figure === 'r' && pieceOnTheWay.color === color)
+          )
+            return;
+        }
+      }
+      //check if king is in check
+      if (this.kingInCheck(board, color)) return;
+      // check if king will be going through any endangared squaress
+      for (let i = 0; i < 2; i++) {
+        const currentPosition = getPosition([currentX + i * castleDirection, currentY]);
+        const newPosition = getPosition([currentX + (i + 1) * castleDirection, currentY]);
+        boardCoppy.delete(currentPosition);
+        boardCoppy.set(newPosition, king);
+        const squareUnderAttack = this.kingInCheck(boardCoppy, color);
+        if (squareUnderAttack) return;
+      }
+      const movedRook = getPosition([currentX + (boardCorner - 1) * castleDirection, currentY]);
+      const rookDestination = getPosition([currentX + castleDirection, currentY]);
+      const kingDestination = getPosition([currentX + castleDirection * 2, currentY]);
+      possibelMoves.push({
+        origin: position,
+        destination: kingDestination,
+        movedRook,
+        rookDestination,
+        type: 'castle',
+      });
+    });
+    return possibelMoves;
   };
 
   private kingMoves = (
@@ -167,7 +212,9 @@ export class Game {
       [-1, 0],
       [-1, -1],
     ];
-    return this.collisionLessMoves(position, color, movedirections, board);
+    const castles = this.castles(position, color, board);
+    const normalMoves = this.collisionLessMoves(position, color, movedirections, board);
+    return [...castles, ...normalMoves];
   };
 
   private kinghtMoves = (
@@ -262,7 +309,7 @@ export class Game {
     }
     return moveMethod(position, color, board);
   };
-
+  // TODO consider extracting attecked square logic to more generic function and usin it here
   private kingInCheck = (board: Map<SquareString, PieceMapElement>, color: Color) => {
     //find players king and check if it is safe
     const opositeColor = color === 'w' ? 'b' : 'w';
@@ -296,14 +343,24 @@ export class Game {
       if (!movedPiece) throw new Error('Error calculating move for piece that does not exist!');
       if (move.type === 'promotion') {
         boardCoppy.set(move.destination, { ...movedPiece, figure: 'q' });
-      } else {
-        boardCoppy.set(move.destination, movedPiece);
-      }
-      boardCoppy.delete(move.origin);
-      if (move.type === 'enpassant') {
+        boardCoppy.delete(move.origin);
+      } else if (move.type === 'enpassant') {
         const captured = move.passedPawn as SquareString;
         boardCoppy.delete(captured);
+        boardCoppy.delete(move.origin);
+      } else if (move.type === 'castle') {
+        const rookSquare = move.movedRook as SquareString;
+        const rookDestination = move.rookDestination as SquareString;
+        const rook = boardCoppy.get(rookSquare) as Piece;
+        boardCoppy.set(rookDestination, rook);
+        boardCoppy.set(move.destination, movedPiece);
+        boardCoppy.delete(rookSquare);
+        boardCoppy.delete(move.origin);
+      } else {
+        boardCoppy.set(move.destination, movedPiece);
+        boardCoppy.delete(move.origin);
       }
+
       const check = this.kingInCheck(boardCoppy, color);
       return !check;
     });
@@ -338,6 +395,23 @@ export class Game {
     if (!movedPiece) return;
     if (possibleMove.type === 'promotion') {
       boardCoppy.set(destination, { ...movedPiece, figure: 'q' });
+      boardCoppy.delete(origin);
+    } else if (possibleMove.type === 'enpassant') {
+      const captured = possibleMove.passedPawn as SquareString;
+      boardCoppy.delete(captured);
+      boardCoppy.delete(origin);
+    } else if (possibleMove.type === 'castle') {
+      const rookSquare = possibleMove.movedRook as SquareString;
+      const rookDestination = possibleMove.rookDestination as SquareString;
+      const rook = boardCoppy.get(rookSquare) as Piece;
+      boardCoppy.set(rookDestination, rook);
+      boardCoppy.set(possibleMove.destination, {
+        ...movedPiece,
+        canLongCastle: false,
+        canShortCastle: false,
+      });
+      boardCoppy.delete(rookSquare);
+      boardCoppy.delete(origin);
     } else {
       boardCoppy.set(destination, movedPiece);
       //check if moved piece is a king or rook to disable future castle options
@@ -361,11 +435,7 @@ export class Game {
       } else {
         boardCoppy.set(destination, movedPiece);
       }
-    }
-    boardCoppy.delete(origin);
-    if (possibleMove.type === 'enpassant') {
-      const captured = possibleMove.passedPawn as SquareString;
-      boardCoppy.delete(captured);
+      boardCoppy.delete(origin);
     }
 
     // set ocasional moves like enpasant

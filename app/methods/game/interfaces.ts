@@ -6,7 +6,7 @@ export type Color = 'w' | 'b';
 
 export type Figure = 'p' | 'k' | 'q' | 'n' | 'b' | 'r';
 
-export type MoveType = 'move' | 'capture' | 'enpassant' | 'promotion';
+export type MoveType = 'move' | 'capture' | 'enpassant' | 'promotion' | 'castle';
 
 export type VectorArray = [number, number][];
 
@@ -27,6 +27,8 @@ export interface PossibleMove {
   destination: SquareString;
   type: MoveType;
   passedPawn?: SquareString;
+  movedRook?: SquareString;
+  rookDestination?: SquareString;
 }
 
 export type OcasionalMove = PossibleMove;

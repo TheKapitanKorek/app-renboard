@@ -1,4 +1,4 @@
-export const boardSize = 8;
+export const boardSize = 8; // has to be a eavan number
 export type xCordType = 'A' | 'B' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J';
 export type yCordType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type SquareString = `${xCordType}${yCordType}`;
