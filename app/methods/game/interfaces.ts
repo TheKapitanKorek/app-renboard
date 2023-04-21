@@ -3,7 +3,7 @@ import { RefObject } from 'react';
 
 export type Color = 'w' | 'b';
 
-export type Figure = 'p' | 'k' | 'q' | 'n' | 'b';
+export type Figure = 'p' | 'k' | 'q' | 'n' | 'b' | 'r';
 
 export type MoveType = 'move' | 'capture' | 'enpassant' | 'promotion';
 

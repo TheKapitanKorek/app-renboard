@@ -114,6 +114,35 @@ export class Game {
     return possibleMoves;
   };
 
+  private collisionMoves = (
+    position: SquareString,
+    color: Color,
+    vectorArray: VectorArray,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
+    const possibleMoves: PossibleMove[] = [];
+    const [currentX, currentY] = getCords(position);
+    const opositeColor = color === 'w' ? 'b' : 'w';
+    vectorArray.forEach(([x, y]) => {
+      for (let i = 1; i < boardSize - 2; i++) {
+        const newX = currentX + x * i;
+        const newY = currentY + y * i;
+        if (newX < 0 || newX > boardSize - 1 || newY < 0 || newY > boardSize - 1) return;
+        const newPosition = getPosition([newX, newY]);
+        const pieceOnWay = board.get(newPosition);
+        if (!pieceOnWay) {
+          possibleMoves.push({ origin: position, destination: newPosition, type: 'move' });
+        } else {
+          if (pieceOnWay.color === opositeColor) {
+            possibleMoves.push({ origin: position, destination: newPosition, type: 'capture' });
+          }
+          return;
+        }
+      }
+    });
+    return possibleMoves;
+  };
+
   private kingMoves = (
     position: SquareString,
     color: Color = this.color,
@@ -150,40 +179,51 @@ export class Game {
     return this.collisionLessMoves(position, color, movedirections, board);
   };
 
-  private bishopMoves(
+  private bishopMoves = (
     position: SquareString,
     color: Color,
     board: Map<SquareString, PieceMapElement> = this.board
-  ) {
-    const possibleMoves: PossibleMove[] = [];
-    const directionVectors = [
+  ) => {
+    const directionVectors: [number, number][] = [
       [1, 1],
       [1, -1],
       [-1, 1],
       [-1, -1],
     ];
-    const [currentX, currentY] = getCords(position);
-    const opositeColor = color === 'w' ? 'b' : 'w';
-    directionVectors.forEach(([x, y]) => {
-      for (let i = 1; i < boardSize - 2; i++) {
-        const newX = currentX + x * i;
-        const newY = currentY + y * i;
-        if (newX < 0 || newX > boardSize - 1 || newY < 0 || newY > boardSize - 1) return;
-        const newPosition = getPosition([newX, newY]);
-        const pieceOnWay = board.get(newPosition);
-        if (!pieceOnWay) {
-          possibleMoves.push({ origin: position, destination: newPosition, type: 'move' });
-        } else {
-          if (pieceOnWay.color === opositeColor) {
-            possibleMoves.push({ origin: position, destination: newPosition, type: 'capture' });
-          }
-          return;
-        }
-      }
-    });
+    return this.collisionMoves(position, color, directionVectors, board);
+  };
 
-    return possibleMoves;
-  }
+  private rookMoves = (
+    position: SquareString,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
+    const directionVectors: [number, number][] = [
+      [1, 0],
+      [-1, 0],
+      [0, -1],
+      [0, 1],
+    ];
+    return this.collisionMoves(position, color, directionVectors, board);
+  };
+
+  private queenMoves = (
+    position: SquareString,
+    color: Color,
+    board: Map<SquareString, PieceMapElement> = this.board
+  ) => {
+    const directionVectors: [number, number][] = [
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1],
+      [1, 0],
+      [-1, 0],
+      [0, -1],
+      [0, 1],
+    ];
+    return this.collisionMoves(position, color, directionVectors, board);
+  };
 
   private getMoves = (
     position: SquareString,
@@ -205,8 +245,11 @@ export class Game {
       case 'b':
         moveMethod = this.bishopMoves;
         break;
+      case 'r':
+        moveMethod = this.rookMoves;
+        break;
       case 'q':
-        moveMethod = this.kingMoves; //TODO make queen moves
+        moveMethod = this.queenMoves; //TODO make queen moves
     }
     return moveMethod(position, color, board);
   };

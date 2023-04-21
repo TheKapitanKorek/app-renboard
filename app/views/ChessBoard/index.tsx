@@ -59,6 +59,10 @@ export const ChessBoard = ({}) => {
       ['A2', { figure: 'n', color: 'w' }],
       ['A3', { figure: 'b', color: 'w' }],
       ['G5', { figure: 'b', color: 'w' }],
+      ['B8', { figure: 'r', color: 'b' }],
+      ['C7', { figure: 'q', color: 'w' }],
+      ['G1', { figure: 'r', color: 'b' }],
+      ['H5', { figure: 'r', color: 'w' }],
     ])
   );
   const [playerColor, setPlayerColor] = useState<Color>('w');
