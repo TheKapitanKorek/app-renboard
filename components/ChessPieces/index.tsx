@@ -4,8 +4,8 @@ import { useGesture } from '@use-gesture/react';
 import { RefObject, useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { SquareString, boardSize, cordToLetterMap } from '@/app/constants';
-import { PieceInterface, MoveHintInterface } from '@/app/methods/game/interfaces';
+import { SquareString, boardSize, cordToLetterMap } from '@/constants';
+import { PieceInterface, MoveHintInterface } from '@/methods/game/interfaces';
 
 export const Piece = ({
   position,

@@ -1,10 +1,10 @@
 'use client';
 /* c8 ignore start */
 import { useRef, useState } from 'react';
-import { Piece, MoveHint } from '@/app/components/ChessPieces';
-import { SquareString } from '@/app/constants';
-import { Game } from '@/app/methods/game';
-import { PieceMapElement, PossibleMove, OcasionalMove, Color } from '@/app/methods/game/interfaces';
+import { Piece, MoveHint } from '@/components/ChessPieces';
+import { SquareString } from '@/constants';
+import { Game } from '@/methods/game';
+import { PieceMapElement, PossibleMove, OcasionalMove, Color } from '@/methods/game/interfaces';
 import './styles.css';
 
 interface PlayerFieldProps {

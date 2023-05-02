@@ -19,7 +19,7 @@
 #board {
   display: grid;
   grid-area: board;
-  background-image: url('../../../public/chessboard.png');
+  background-image: url('../../public/chessboard.png');
   background-repeat: no-repeat;
   background-size: contain;
   grid-template-columns: repeat(8, 12.5%);

@@ -1,5 +1,5 @@
-import { Piece } from '@/app/components/ChessPieces';
-import { SquareString } from '@/app/constants';
+import { Piece } from '@/components/ChessPieces';
+import { SquareString } from '@/constants';
 import { RefObject } from 'react';
 
 export type Color = 'w' | 'b';

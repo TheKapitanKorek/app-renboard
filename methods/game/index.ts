@@ -5,7 +5,7 @@ import {
   boardSize,
   yCordType,
   xCordType,
-} from '@/app/constants';
+} from '@/constants';
 import {
   PieceMapElement,
   PossibleMove,
