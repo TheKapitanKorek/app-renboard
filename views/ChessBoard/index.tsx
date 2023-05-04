@@ -6,6 +6,7 @@ import { SquareString } from '@/constants';
 import { Game } from '@/methods/game';
 import { PieceMapElement, PossibleMove, OcasionalMove, Color } from '@/methods/game/interfaces';
 import './styles.css';
+import { trpc } from '@/utils/trpc';
 
 interface PlayerFieldProps {
   username: string;
@@ -66,6 +67,9 @@ export const ChessBoard = ({}) => {
   const [playerColor, setPlayerColor] = useState<Color>('w');
   const [possibleMoves, setPossibleMoves] = useState<PossibleMove[]>([]);
   const [ocasionalMoves, setOcasionalMoves] = useState<OcasionalMove[]>([]);
+  
+  let { data: users } = trpc.greeting.useQuery({name:"Tomek"});
+  console.log(users);
 
   const game = new Game(
     board,
