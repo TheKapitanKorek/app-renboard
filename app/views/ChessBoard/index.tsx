@@ -68,9 +68,6 @@ export const ChessBoard = ({}) => {
   const [possibleMoves, setPossibleMoves] = useState<PossibleMove[]>([]);
   const [ocasionalMoves, setOcasionalMoves] = useState<OcasionalMove[]>([]);
   
-  let { data: users } = trpc.greeting.useQuery({name:"Tomek"});
-  console.log(users);
-
   const game = new Game(
     board,
     setBoard,

@@ -19,6 +19,7 @@
     "@trpc/react-query": "^10.24.0",
     "@trpc/server": "^10.24.0",
     "@use-gesture/react": "^10.2.24",
+    "axios": "^1.4.0",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",

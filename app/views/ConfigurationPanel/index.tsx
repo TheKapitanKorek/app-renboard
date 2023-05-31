@@ -1,23 +1,28 @@
-'use client';
-import { useState } from 'react';
-import { MdKeyboardArrowDown } from 'react-icons/md';
-import { FaChessPawn } from 'react-icons/fa';
-import { SlMagicWand } from 'react-icons/sl';
-import { GiMagicShield } from 'react-icons/gi';
+"use client";
+import { useEffect, useState } from "react";
+import { MdKeyboardArrowDown } from "react-icons/md";
+import { FaChessPawn } from "react-icons/fa";
+import { SlMagicWand } from "react-icons/sl";
+import { GiMagicShield } from "react-icons/gi";
 
-import { StyledRadioButton, ButtonPrimary } from '../../../components/Buttons';
-import { LoadingMessageBox } from '../../../components/LoadingGameBox';
+import { ButtonPrimary, StyledRadioButton } from "../../../components/Buttons";
+import { LoadingMessageBox } from "../../../components/LoadingGameBox";
+
+import { trpc } from "@/utils/trpc";
+import { WebSocketEvents } from "vitest";
 
 interface GameMode {
   time: `${number}_min`;
-  mode: 'normal' | 'magic' | 'epic';
+  mode: "normal" | "magic" | "epic";
 }
 
 export const ConfigurationPanel = () => {
+  const [websocket, setWebsocket] = useState(null);
+  const [room, setRoom] = useState('');
   const [expanded, setExpanded] = useState(false);
   const [gameMode, setGameMode]: [GameMode, Function] = useState({
-    time: '3_min',
-    mode: 'normal',
+    time: "3_min",
+    mode: "normal",
   });
   const gameModesIconMap = {
     normal: FaChessPawn,
@@ -25,6 +30,26 @@ export const ConfigurationPanel = () => {
     epic: GiMagicShield,
   };
   const GameIcon = gameModesIconMap[gameMode.mode];
+
+  const createRoom = trpc.createRoom.useMutation(); 
+
+  useEffect(()=>{
+    const ws = new WebSocket('ws://localhost:3001');
+    ws.onmessage = (event)=>{
+      console.log('some message', event.data);
+    }
+    setWebsocket(ws);
+  },[])
+
+  const createGame = async (e:React.MouseEvent<HTMLElement>) => {
+      e.preventDefault();
+      const response = await createRoom.mutateAsync({userId: 'user1', playFriend: false});
+      console.log(response);
+      const object = {type:'join', params:{roomId:response.roomId, senderId:'11111'}};
+      websocket.send(JSON.stringify(object));
+      console.log('join message sent');
+  }
+
 
   return (
     <form className="bg-skin text-onyx basis-1/3 sm:mr-8 rounded-md p-4 flex flex-col justify-start sm:h-[60vw] md:h-[85vh] w-full">
@@ -37,20 +62,19 @@ export const ConfigurationPanel = () => {
         data-testid="mode-select-button"
       >
         <GameIcon size={20} />
-        <p className="ml-2">{gameMode.time.replace('_', ' ')}</p>
+        <p className="ml-2">{gameMode.time.replace("_", " ")}</p>
         <MdKeyboardArrowDown
           size={30}
-          className={`flex sm:hidden lg:flex position absolute right-1${
-            expanded ? ' rotate-180' : ''
-          }`}
+          className={`flex sm:hidden lg:flex position absolute right-1${expanded ? " rotate-180" : ""
+            }`}
         />
       </button>
       <fieldset
         role="radiogroup"
-        className={`expandable-select${expanded ? '' : ' hidden'}`}
+        className={`expandable-select${expanded ? "" : " hidden"}`}
         onChange={(e) => {
           const target = e.target as HTMLFieldSetElement;
-          const [time, mode] = target.id.split('-');
+          const [time, mode] = target.id.split("-");
           setExpanded(false);
           setGameMode({ time, mode });
         }}
@@ -100,7 +124,11 @@ export const ConfigurationPanel = () => {
         </ul>
       </fieldset>
       <div className="flex flex-col mt-auto">
-        <ButtonPrimary>Play</ButtonPrimary>
+        <ButtonPrimary
+        onClick={createGame}
+        >
+          Play
+        </ButtonPrimary>
         <LoadingMessageBox message="Searching for a worthy oponent" />
         <ButtonPrimary>Play Friend</ButtonPrimary>
       </div>

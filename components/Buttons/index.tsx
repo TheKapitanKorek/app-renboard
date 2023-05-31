@@ -1,5 +1,5 @@
 interface ButtonInterface {
-  onClick?: () => {};
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   children: string;
 }
 
